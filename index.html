@@ -62,8 +62,38 @@
   <button id="btn">Кнопка</button>
   <div id="result">Ты класс!</div>
 
+  <audio id="beep" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhIeFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+Pwt6AoBhVlpd7xvW0iAxxak9jvsmURBFuR1OzGbSwFE2eZ2u+5cCkEGmWW1+yyaRwDGmOT1OuxZhsEHGCR0+mraiEFG2CN0OesZiMHHl+KzuWoYSoJH12Hy9+gXigOH1uFytqWXDIPG1d/ycyOWj0QGVJ7x8iFW0oOFVB2xcSDX1ELDk1xwsF7V0gKCktrvr1yUTsKB0Zlu7prRTwIAEFmt7NjPUoABDNisK04O1P//wE2YKupMC1n/v8ALFumpjUvd///AB1Zo6EqKGr+/wAVUJ2dJyVy/v8ADk2YmCMicP7/AApJlJQfIXb+/wAESpCPHB55/v8AAkWPjRsbfv7/AANCh4gYGoH+/wAEQIGAGBiE/v8ABT99fhcXiP7/AAU+fHsWFon+/wAFPHp5FBWK/v8ABDt4dxITjP7/AAQ5dnUREI3+/wAEN3VzDw6O/v8ABDVzcQ0NkP7/AAQycXEKDJH+/wAEMXBwCAyS/v8ABDBwcAcLk/7/AAMub28FCpT+/wACLG5uBAqV/v8AAitubQIKlv7/AAMqbW0BCpf+/wACKG1tAAqY/v8AAidsbAAJmf7/AAMmbGsACZr+/wADJWtrAAmb/v8AAyRragAJnP7/AAMka2oACZ3+/wADJGppAAme/v8AAyNpaQAJn/7/AAMiaWkACaD+/wACIWlpAAmg/v8AAiBoaAAJoP7/AABBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU......" type="audio/wav">
+    <!-- Длинный base64-звуковой файл обрезан для краткости, но ниже — полный рабочий вариант -->
+  </audio>
+
   <script>
+    // Генерация короткого beep-звука программно (без внешних файлов)
+    function playBeep() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 800; // Частота ~800 Гц — как в магазинах
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      } catch (e) {
+        console.warn("Звук недоступен:", e);
+      }
+    }
+
     document.getElementById('btn').addEventListener('click', function() {
+      // Воспроизводим звук
+      playBeep();
+
       // Скрываем кнопку и исходное сообщение
       document.getElementById('message').style.display = 'none';
       this.style.display = 'none';
@@ -88,7 +118,6 @@
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         container.appendChild(confetti);
 
-        // Анимация падения
         const animation = confetti.animate([
           { top: '-10px', opacity: 1, transform: 'rotate(0deg)' },
           { top: '100vh', opacity: 0, transform: 'rotate(' + (Math.random() * 360) + 'deg)' }
@@ -97,7 +126,6 @@
           easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
         });
 
-        // Удаляем элемент после анимации
         animation.onfinish = () => confetti.remove();
       }
     }
