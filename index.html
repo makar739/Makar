@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Для Макара</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    #message {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    #btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    #btn:hover {
+      background-color: darkred;
+    }
+
+    #btn:active {
+      transform: scale(0.95);
+    }
+
+    #result {
+      font-size: 32px;
+      font-weight: bold;
+      color: green;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="message">Макар, нажми на кнопку</div>
+  <button id="btn">Кнопка</button>
+  <div id="result">Ты класс!</div>
+
+  <script>
+    document.getElementById('btn').addEventListener('click', function() {
+      // Скрываем кнопку и исходное сообщение
+      document.getElementById('message').style.display = 'none';
+      this.style.display = 'none';
+
+      // Показываем результат
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+
+      // Запускаем конфетти
+      createConfetti();
+    });
+
+    function createConfetti() {
+      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+      const container = document.body;
+
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        container.appendChild(confetti);
+
+        // Анимация падения
+        const animation = confetti.animate([
+          { top: '-10px', opacity: 1, transform: 'rotate(0deg)' },
+          { top: '100vh', opacity: 0, transform: 'rotate(' + (Math.random() * 360) + 'deg)' }
+        ], {
+          duration: 2000 + Math.random() * 3000,
+          easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+        });
+
+        // Удаляем элемент после анимации
+        animation.onfinish = () => confetti.remove();
+      }
+    }
+  </script>
+</body>
+</html>
